@@ -51,12 +51,17 @@ class CustomerSeeder extends Seeder
                 ]);
             }
 
+            // Correction ici : on récupère jusqu'à 3 produits uniques d'un coup
             $reviewCount = rand(0, 3);
-            for ($j=0; $j < $reviewCount; $j++) { 
-                Review::factory()->create([
-                    'customer_id' => $customer->id,
-                    'product_id' => Product::inRandomOrder()->first()->id,
-                ]);
+            if ($reviewCount > 0) {
+                $randomProducts = Product::inRandomOrder()->limit($reviewCount)->get();
+
+                foreach ($randomProducts as $product) {
+                    Review::factory()->create([
+                        'customer_id' => $customer->id,
+                        'product_id' => $product->id,
+                    ]);
+                }
             }
 
             $bar->advance();
